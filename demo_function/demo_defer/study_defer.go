@@ -2,7 +2,11 @@
 /*
 package main
 
-import "fmt"
+import (
+	"go/constant"
+	"time"
+	"fmt"
+)
 
 func main() {
 	// f1()
@@ -156,14 +160,195 @@ func callback(y int, f func(int, int)) {
 	f(y, 2)
 }
 */
-// 闭包 
+// 闭包
+/*
 package main
 import "fmt"
 func main() {
 	// 匿名函数
-	f :=func(i int) {
+	func(i int) {
 		fmt.Println(i)
+	}(10)
+}
+*/
+/*
+package main
+import "fmt"
+func main() {
+	fv := func(){
+		fmt.Println("hello,world")
 	}
-	f(1)
-	
+	fv()
+}
+*/
+/*
+package main
+import "fmt"
+func f()(ret int) {
+	defer func(){
+		ret++
+	}()
+	return 1
+}
+func main() {
+	fmt.Println(f())
+}
+*/
+/*
+// 应用闭包：将函数作为返回值
+package main
+import "fmt"
+func main() {
+	p2:=Add2()
+	fmt.Printf("Call Add2 for 3 gives: %v\n",p2(3))
+	TwoAdder := Adder(2)
+	fmt.Printf("The result is: %v\n",TwoAdder(3))
+}
+func Add2() func(b int) int{
+	return func(b int) int {
+		return b + 2
+	}
+}
+func Adder(a int) func(b int) int {
+	return func(b int) int {
+		return a + b
+	}
+}
+*/
+/*
+package main
+
+import "fmt"
+
+func Adder() func(int) int {
+	var x int
+	return func(delta int) int {
+		x += delta
+		return x
+	}
+}
+func main() {
+	var f = Adder()
+	fmt.Println(f(300))
+	fmt.Println(f(300))
+	fmt.Println(f(300))
+}
+*/
+/*
+// 工厂函数
+package main
+import (
+	"fmt"
+	"strings"
+)
+
+func main() {
+	addJpg :=MakeAddSuffix(".jpg")
+	addBmp :=MakeAddSuffix(".bmp")
+	fmt.Println(addBmp("df20190418"))
+	fmt.Println(addJpg("xz1022193"))
+
+}
+func MakeAddSuffix(suffix string) func(string) string{
+	return func(name string) string{
+		if !strings.HasSuffix(name, suffix) {
+			return name + suffix
+		}
+		return name
+	}
+}
+*/
+/*
+// 利用闭包实现斐波那契数列
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+	f := fib()
+	start := time.Now()
+	for i := 0; i < 25; i++ {
+		fmt.Println(f())
+	}
+	end := time.Now()
+	delta := end.Sub(start)
+	fmt.Printf("longCalculation took this amount of time: %s\n", delta)
+
+}
+func fib() func() int {
+	var c,a,b int = 0,1,1
+	return func() int{
+		switch c {
+		case 0,1:
+			c ++
+		default:
+			a,b =b,b+a
+		}
+		return b
+	}
+}
+*/
+/*
+// 计算函数执行时间
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+	result := 0
+	start := time.Now()
+	for i := 0; i < 25; i++ {
+		result = fib(i)
+		fmt.Printf("fib(%d) is: %d\n", i, result)
+	}
+	end := time.Now()
+	delta := end.Sub(start)
+	fmt.Printf("longCalculation took this amount of time: %s\n", delta)
+}
+func fib(n int) int {
+	if n <= 1 {
+		return 1
+	} else {
+		return fib(n-1) + fib(n-2)
+	}
+}
+*/
+
+// 通过内存缓存来提升性能
+package main
+import (
+	"fmt"
+	"time"
+)
+const LIM = 41
+var fibs [LIM]uint64
+func main() {
+	var result uint64 = 0
+	start := time.Now()
+	for i := 0; i < LIM; i++ {
+		result = fib(i)
+		fmt.Printf("fib(%d) is: %d\n", i, result)
+	}
+	end := time.Now()
+	delta := end.Sub(start)
+	fmt.Printf("longCalculation took this amount of time: %s\n", delta)
+}
+func fib(n int) (res uint64) {
+	if fibs[n] != 0{
+		res = fibs[n]
+		return
+	}
+	if n<= 1{
+		res = 1
+	}else {
+		res = fib(n-1) + fib(n-2)
+	}
+	fibs[n] = res
+	return 
 }
