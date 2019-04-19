@@ -1,6 +1,9 @@
 /*
 package main
-import "fmt"
+import (
+	"debug/pe"
+	"fmt"
+)
 
 type person struct {
 	Name string
@@ -72,7 +75,7 @@ func main() {
 	fmt.Println(a.string)
 }
 */
-
+/*
 // 组合类似于继承
 package main
 
@@ -100,4 +103,82 @@ func main() {
 	fmt.Println(a, b)
 	fmt.Println(b.Age)
 	fmt.Println(b.human.Age)
+}
+*/
+/*
+// 2019-04-19 重新学习struct
+package main
+import (
+	"fmt"
+)
+
+func main() {
+	// 初始化struct
+	i := test{Name:"Jack",Gender: "M"}
+	i1 := &test{Name:"Jack",Gender: "M"}
+	i.Name = "Bob"
+	fmt.Println(i)
+	fmt.Println(i1)
+
+}
+// define struct
+type test struct {
+	Name string
+	Age int
+	Gender string
+}
+*/
+/*
+package main
+
+import (
+	"fmt"
+	"strings"
+)
+
+type Person struct {
+	firstName string
+	lastName  string
+}
+
+func upPerson(p *Person) {
+	p.firstName = strings.ToUpper(p.firstName)
+	p.lastName = strings.ToUpper(p.lastName)
+}
+func main() {
+	// 三种初始化struct方法pers1 pers2 pers3
+	var pers1 Person
+	pers1.firstName = "huang"
+	pers1.lastName = "di"
+	upPerson(&pers1)
+	fmt.Printf("The name of the person is %s %s\n", pers1.firstName, pers1.lastName)
+
+	pers2 := new(Person)
+	pers2.firstName = "huang"
+	pers2.lastName = "di" // --> (*pers2).lastName = "di"
+	upPerson(pers2)
+	fmt.Printf("The name of the person is %s %s\n", pers2.firstName, pers2.lastName)
+
+	pers3 := &Person{firstName:"huang",lastName:"di"}
+	upPerson(pers3)
+	fmt.Printf("The name of the person is %s %s\n", pers3.firstName, pers3.lastName)
+}
+*/
+
+// 结构体转换
+package main
+
+import "fmt"
+
+type number struct {
+	f float64
+}
+type nr number
+
+func main() {
+	a := number{5.0}
+	b := nr{5.0}
+	fmt.Println(a, b)
+	var c = number(b)
+	fmt.Println(a, b, c)
 }
