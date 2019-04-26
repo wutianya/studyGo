@@ -1,6 +1,7 @@
 /*
 package main
 import (
+	"github.com/derekparker/delve/pkg/proc/native"
 	"debug/pe"
 	"fmt"
 )
@@ -164,7 +165,7 @@ func main() {
 	fmt.Printf("The name of the person is %s %s\n", pers3.firstName, pers3.lastName)
 }
 */
-
+/*
 // 结构体转换
 package main
 
@@ -177,8 +178,31 @@ type nr number
 
 func main() {
 	a := number{5.0}
+	a.f = 88
 	b := nr{5.0}
 	fmt.Println(a, b)
 	var c = number(b)
 	fmt.Println(a, b, c)
+}
+*/
+
+// 匿名struct 
+
+package main 
+import "fmt"
+ 
+type Person struct {
+	Name string
+	Gender string
+	Human
+}
+
+type Human struct {
+	age int 
+
+	 
+}
+func main() {
+	Jack := Person{Name:"Jack",Gender:"F",Human: Human{age: 18}}
+	fmt.Println(Jack.age)
 }
