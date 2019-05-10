@@ -95,7 +95,7 @@ func main() {
 	}
 }
 */
-
+/*
 package main
 
 import (
@@ -128,7 +128,63 @@ func main() {
 }
 
 func Counters(input string) {
-	nrchars += len(input) -2
+	nrchars += len(input) -2 // -2 for \r\n
 	nrwords += len(strings.Fields(input))
 	nrlines++
+}
+*/
+/*
+// 读文件
+// fileinput.go
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"io"
+	"os"
+)
+
+func main() {
+	inputFile, inputError := os.Open("input.txt")
+	if inputError != nil {
+		fmt.Printf("An error occurred on opening the inputfile\n" +
+			"Does the file exist?\n" +
+			"Have you got access to it?\n")
+		return // exit the function on error
+	}
+	// defer inputFile.Close()
+
+	inputReader := bufio.NewReader(inputFile)
+	for {
+		inputString, readerError := inputReader.ReadBytes('\n')
+		// inputString, readerError := inputReader.ReadString('\n')
+		fmt.Printf("The input was: %s", inputString)
+		if readerError == io.EOF {
+			return
+		}
+	}
+}
+*/
+
+// read_write_file.go
+package main
+
+import (
+	"fmt"
+	"io/ioutil"
+)
+
+func main() {
+	inputFile := "products.txt"
+	outputFile := "products_copy.txt"
+	buf, err := ioutil.ReadFile(inputFile)
+	if err != nil {
+		panic(err.Error())
+	}
+	fmt.Printf("%s\n", string(buf))
+	err = ioutil.WriteFile(outputFile, buf, 0644) // oct, not hex
+	if err != nil {
+		panic(err.Error())
+	}
 }

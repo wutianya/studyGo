@@ -107,7 +107,7 @@ func main() {
 	fmt.Println(strings.TrimRight(s, " 520"))
 }
 */
-/*
+
 package main
 
 import (
@@ -116,7 +116,7 @@ import (
 )
 
 func main() {
-	str := "the quick brown foc jumps over the lazy dog"
+	str := "the quick brown foc jumps over the lazy dog\n 112"
 	sl := strings.Fields(str)
 	fmt.Println(sl)
 	for _, val := range sl {
@@ -129,8 +129,8 @@ func main() {
 	str3 := strings.Join(sl2, ";")
 	fmt.Println(str3)
 }
-*/
 
+/*
 // strconv
 package main
 
@@ -155,3 +155,4 @@ func main() {
 	newS = strconv.Itoa(an)
 	fmt.Printf("The new string is: %s\n", newS)
 }
+*/
