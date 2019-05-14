@@ -1,7 +1,6 @@
 /*
 package main
 import (
-	"github.com/derekparker/delve/pkg/proc/native"
 	"debug/pe"
 	"fmt"
 )
