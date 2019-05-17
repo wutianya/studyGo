@@ -3,6 +3,8 @@
 // Scanln 和 Sscanf的区别
 package main
 import (
+	"context"
+	"golang.org/x/tools/internal/lsp/source"
 	"cmd/go/internal/str"
 	"fmt"
 )
@@ -288,7 +290,7 @@ func main() {
 	fWriter.Flush()
 }
 */
-
+/*
 // initFile.go
 package main
 
@@ -333,7 +335,7 @@ func main() {
 	}
 
 	str := fmt.Sprintf(Content(), i.date, i.author)
-		
+
 	f, err := os.OpenFile(i.filename, os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
 		fmt.Println("An error occurrd with opening or creation")
@@ -360,11 +362,11 @@ func Content() string {
 	return str
 }
 func FristLine(filename string) (line string){
-	/*
-		bash  #!/usr/bin/bash
-		python #!/usr/bin/env python
-		other # 
-	*/
+
+	// 	bash  #!/usr/bin/bash
+	// 	python #!/usr/bin/env python
+	// 	other #
+
 	if strings.HasSuffix(filename, ".sh") {
 		line = "#!/usr/bin/bash"
 	}else if strings.HasSuffix(filename, ".py") {
@@ -373,4 +375,268 @@ func FristLine(filename string) (line string){
 		line = "# " + filename
 	}
 	return
+}
+*/
+/*
+// wiki_part.go
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"io/ioutil"
+	"os"
+)
+
+type Page struct {
+	Title string
+	Body  []byte
+}
+
+func (self Page) save() {
+	f, err := os.OpenFile(self.Title, os.O_WRONLY|os.O_CREATE, 0666)
+	if err != nil {
+		fmt.Println("open file error")
+		os.Exit(0)
+	}
+
+	// file colsed
+	defer f.Close()
+
+	fWriter := bufio.NewWriter(f)
+	fWriter.WriteString(string(self.Body))
+	fWriter.Flush()
+}
+
+func load(title string) {
+	buf, err := ioutil.ReadFile(title)
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "File error: %s\n", err)
+	}
+	fmt.Printf("%s\n", string(buf))
+}
+func main() {
+	p := new(Page)
+	p.Title = "F:\\devops\\github\\go\\ReadWriteData\\input.txt"
+	p.Body = []byte{56, 57, }
+	p.save()
+	load(p.Title)
+}
+*/
+/*
+// wiki_part1.go
+package main
+
+import (
+	"fmt"
+	"io/ioutil"
+)
+
+type Page struct {
+	Title string
+	Body []byte
+}
+
+func (this *Page) save() (err error) {
+	return ioutil.WriteFile(this.Title, this.Body, 0666)
+}
+
+func (this *Page) load(title string) (err error) {
+	this.Title = title
+	this.Body, err = ioutil.ReadFile(this.Title)
+	return err
+}
+
+func main() {
+	// page := Page{
+	// 	"Page.md",
+	// 	[]byte("# Page\n## Section1\nThis is section1."),
+	// }
+	page := new(Page)
+	page.Title = "F:\\devops\\github\\go\\ReadWriteData\\Page.md"
+	page.Body = []byte("# Page\n## Section1\nThis is section1.")
+	page.save()
+
+	// load
+	var p Page
+	p.load("F:\\devops\\github\\go\\ReadWriteData\\Page.md")
+	fmt.Println(string(p.Body))
+
+}
+*/
+/*
+// sline example
+package main
+
+import "fmt"
+
+func main() {
+	var a = []byte{1,23}
+	b:= []byte{'g', 'o', 'l', 'a', 'n', 'g'}
+	b = []byte("This is section1.")
+	fmt.Println(a)
+	fmt.Println(string(b))
+}
+*/
+/*
+// 文件拷贝
+package main
+
+import (
+	"fmt"
+	"io"
+	"os"
+)
+
+func main() {
+	CopyFile("F:\\devops\\github\\go\\ReadWriteData\\target", "F:\\devops\\github\\go\\ReadWriteData\\Page.md")
+	fmt.Println("Copy file done")
+}
+func CopyFile(dstName, srcName string) (written int64, err error) {
+	src, err := os.Open(srcName)
+	if err != nil {
+		return
+	}
+	defer src.Close()
+
+	dst, err := os.Create(dstName)
+	if err != nil {
+		return
+	}
+	defer dst.Close()
+	return io.Copy(dst, src)
+}
+*/
+/*
+// 从命令行读取参数
+package main
+
+import (
+	"fmt"
+	"os"
+	"strings"
+)
+
+func main(){
+	who := "Alice "
+	if len(os.Args) > 1 {
+		who += strings.Join(os.Args[1:], ",")
+	}
+	fmt.Println(os.Args[1:])
+	fmt.Println("Hello ",who)
+}
+*/
+/*
+package main
+import (
+	"flag"
+	"os"
+)
+
+var NewLine =flag.Bool("n", false, "print newline")
+
+const (
+	Space = " "
+	Newline = "\n"
+)
+
+func main() {
+
+	flag.PrintDefaults()
+	flag.Parse()
+	var s string = ""
+	for i := 0; i < flag.NArg(); i++ {
+		if i > 0 {
+			s += " "
+			if *NewLine {
+				s += Newline
+			}
+		}
+		s += flag.Arg(i)
+	}
+	os.Stdout.WriteString(s)
+}
+*/
+/*
+// 用 buffer 读取文件
+package main
+
+import (
+	"bufio"
+	"flag"
+	"fmt"
+	"io"
+	"os"
+)
+
+func cat(r *bufio.Reader) {
+	for {
+		buf, err := r.ReadBytes('\n')
+		fmt.Fprintf(os.Stdout, "%s", buf)
+		if err == io.EOF {
+			break
+		}
+		// fmt.Fprintf(os.Stdout, "%s", buf)
+	}
+	return
+}
+
+func main() {
+	flag.Parse()
+	if flag.NArg() == 0 {
+		cat(bufio.NewReader(os.Stdin))
+	}
+	for i:=0; i<flag.NArg(); i++ {
+		f,err := os.Open(flag.Arg(i))
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "%s:error reading from %s: %s\n", os.Args[0], flag.Arg(i), err.Error())
+		}
+		cat(bufio.NewReader(f))
+	}
+}
+*/
+
+package main
+
+import (
+	"bufio"
+	"flag"
+	"fmt"
+	"io"
+	"os"
+)
+
+var numberFlag = flag.Bool("n", false, "number each line")
+
+func cat(r *bufio.Reader) {
+	i := 1
+	for {
+		buf, err := r.ReadBytes('\n')
+		if *numberFlag {
+			fmt.Fprintf(os.Stdout, "%d %s", i, buf)
+			// fmt.Fprintf(os.Stdout,"%s", buf)
+			i ++
+		}else {
+			fmt.Fprintf(os.Stdout, "%s", buf)
+		}
+		if err == io.EOF {
+			break
+		}
+	}
+}
+
+func main() {
+	flag.Parse()
+	if flag.NArg() == 0 {
+		cat(bufio.NewReader(os.Stdin))
+	}
+	for i := 0; i < flag.NArg(); i++ {
+		f, err := os.Open(flag.Arg(i))
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "%s:error reading from %s: %s\n", os.Args[0], flag.Arg(i), err.Error())
+			continue
+		}
+		cat(bufio.NewReader(f))
+	}
 }

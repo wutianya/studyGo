@@ -124,9 +124,9 @@ func main() {
 	}
 	str2 := "GO1|The ABC of Go|25"
 	sl2 := strings.Split(str2, "|")
-	fmt.Println(sl2[1])
+	fmt.Println("sl2: ", sl2)
 	// join
-	str3 := strings.Join(sl2, ";")
+	str3 := strings.Join(sl2, "---")
 	fmt.Println(str3)
 }
 
