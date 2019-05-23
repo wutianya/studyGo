@@ -14,7 +14,7 @@ func main() {
 	go longWait()
 	go shortWait()
 	fmt.Println("About to sleep in main()")
-	time.Sleep(10 * 1e9)
+	time.Sleep(6 * 1e9)
 	fmt.Println("At the end of main()")
 }
 
@@ -166,10 +166,10 @@ func main() {
 	fmt.Println("sending: ", 10)
 	c <- 10
 	fmt.Println("sent: ", 10)
-	
+
 }
 */
-
+/*
 // go sum.go
 
 package main
@@ -184,3 +184,205 @@ func main() {
 	go sum(12,6,c)
 	fmt.Println(<-c)
 }
+*/
+/*
+// goroutines2.go
+package main
+
+import (
+	"fmt"
+)
+
+func numGen(start, count int, out chan<- int) {
+	for i := 0; i < count; i++ {
+		// use channel sent variable start for type int
+		out <- start
+		start += count
+	}
+	close(out)
+}
+func numEchoRangein(in <-chan int, done chan<- bool) {
+	for num := range in {
+		fmt.Printf("%d\n", num)
+	}
+	done <- true
+}
+func main() {
+	numChan := make(chan int)
+	done := make(chan bool)
+	go numGen(0, 10, numChan)
+	go numEchoRangein(numChan, done)
+
+	<-done
+}
+*/
+/*
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+	stream := pump()
+	go suck(stream)
+	time.Sleep(1e9)
+}
+func pump() chan int {
+	ch := make(chan int)
+	go func() {
+		for i := 0; ; i++ {
+			ch <- i
+		}
+	}()
+	return ch
+}
+func suck(ch chan int) {
+	// for {
+	// 	fmt.Println(<-ch)
+	// }
+	for v := range ch {
+		fmt.Println(v)
+	}
+}
+*/
+/*
+package main
+
+import "fmt"
+
+func generate(ch chan int) {
+	for i := 2; ; i++ {
+		ch <- i // send i to channel ch
+	}
+}
+
+func filter(in, out chan int, prime int) {
+	for {
+		i := <-in
+		if i%prime != 0 {
+			out <- i
+		}
+	}
+}
+
+func main() {
+	ch := make(chan int)
+	go generate(ch)
+	for c := 0; c < 3; c++ {
+		prime := <-ch
+		fmt.Println("prime: ", prime)
+		ch1 := make(chan int)
+		a := <-ch
+		fmt.Println("ch: ", a)
+		go filter(ch, ch1, prime) // 2 3 2
+		b := <-ch1
+		fmt.Println("ch1: ", b)
+		ch = ch1 // ch = 3
+	}
+}
+*/
+/*
+// 显式关闭通道
+package main
+
+import "fmt"
+// import "time"
+
+func main() {
+	ch := make(chan string)
+	go sendData(ch) // sendData 是协程,和main函数不在同个线程中
+	getData(ch) // getData 是和main函数在同个线程中, 只有使用了go关键字的才是协程
+	// time.Sleep(1e9)
+}
+
+func sendData(ch chan string) {
+	ch <- "Go"
+	ch <- "Pyhon"
+	ch <- "Shell"
+	ch <- "Java"
+	close(ch) // 通道仅为发送者才能使用显示关闭通道
+}
+
+func getData(ch chan string) {
+	for {
+		input, open := <-ch // the "open" type is bool
+		if !open {
+			break
+		}
+		fmt.Printf("input: %s\n", input)
+	}
+}
+*/
+
+/*
+// 使用 select 切换协程
+// goroutine_select.go
+
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+	ch1 := make(chan int)
+	ch2 := make(chan int)
+
+	go pump1(ch1)
+	go pump2(ch2)
+	go suck(ch1, ch2)
+	time.Sleep(1e9)
+}
+func pump1(ch chan int) {
+	for i := 0; ; i++ {
+		ch <- i * 2
+	}
+}
+func pump2(ch chan int) {
+	for i := 0; ; i++ {
+		ch <- i + 5
+	}
+}
+func suck(ch1, ch2 chan int) {
+	for {
+		select {
+		case v := <-ch1:
+			fmt.Printf("Received on channel 1: %d\n", v)
+		case v := <-ch2:
+			fmt.Printf("Received on channel 2: %d\n", v)
+		}
+	}
+}
+*/
+// /*
+package main
+
+import (
+	"fmt"
+)
+
+func main() {
+	ch := make(chan int)
+	var i int
+	var ok bool = true
+	go tel(ch)
+
+	for ok {
+		if i, ok = <-ch; ok {
+			fmt.Println(i)
+		}
+	}
+
+}
+
+func tel(ch chan int) {
+	for i := 0; i < 10; i++ {
+		ch <- i
+	}
+	close(ch) // if this is ommitted: panic: all goroutines are asleep - deadlock!
+}
+
+// */
