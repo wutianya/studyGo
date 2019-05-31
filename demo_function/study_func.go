@@ -124,7 +124,7 @@ func Multiply(a, b int, reply *int) {
 	*reply = a * b
 }
 */
-/*
+
 // 传递变长参数
 package main
 
@@ -133,11 +133,11 @@ import (
 )
 
 func main() {
-	x := min(1, 3, 2, 0)
-	fmt.Printf("The mininum is: %d\n", x)
-	// slice := []int{7,9,3,5,1}
-	// x = min(slice...)
+	// x := min(1, 3, 2, 0)
 	// fmt.Printf("The mininum is: %d\n", x)
+	slice := []int{7,9,3,5,1}
+	x := min(slice...)
+	fmt.Printf("The mininum is: %d\n", x)
 }
 func min(s ...int) int {
 	if len(s) == 0 {
@@ -153,7 +153,7 @@ func min(s ...int) int {
 	}
 	return min
 }
-*/
+
 /*
 package main
 
@@ -174,6 +174,7 @@ func foo(s ...string) {
 	}
 }
 */
+/*
 package main
 import (
 	"fmt"
@@ -188,3 +189,4 @@ func main() {
 func bar(s []int)  {
 	fmt.Println(s)
 }
+*/
