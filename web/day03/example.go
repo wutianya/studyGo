@@ -52,8 +52,16 @@ import (
 	"net/http"
 )
 func process(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-	fmt.Fprintln(w, "From: ",r.Form)
+	// enctype = application/x-www-form-urlencoded
+	r.ParseMultipartForm(1024)
+	fmt.Fprintln(w, r.Form)
+	fmt.Fprintln(w, r.FormValue("hello"))
+	fmt.Fprintln(w, r.PostFormValue("hello"))
+	fmt.Fprintln(w, r.PostForm)
+	fmt.Fprintln(w, r.MultipartForm)
+	// enctype = multipart/form-data
+	// r.ParseMultipartForm(1024)
+	// fmt.Fprintln(w, r.MultipartForm)
 }
 func main(){
 	server := http.Server{
