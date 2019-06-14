@@ -1,3 +1,6 @@
+// 存储数据
+
+/*
 package main
 
 import (
@@ -5,17 +8,17 @@ import (
 )
 
 type Post struct {
-	Id	int
-	Content	string
-	Author	string
+	Id      int
+	Content string
+	Author  string
 }
 
 var PostById map[int]*Post
-var	PostByAuthor	map[string][]*Post
+var PostByAuthor map[string][]*Post
 
 func strore(post Post) {
 	PostById[post.Id] = &post
-	PostByAuthor[post.Author] = append(PostByAuthor[post.Author],&post)
+	PostByAuthor[post.Author] = append(PostByAuthor[post.Author], &post)
 }
 
 func main() {
@@ -32,12 +35,48 @@ func main() {
 	strore(post3)
 	strore(post4)
 
-	fmt.Println(PostById[1])
+	// fmt.Println(PostById[1])
 	// fmt.Println(PostByAuthor)
-	for _, post := range PostByAuthor["Susan"] {
+	for k, post := range PostByAuthor["Susan"] {
 		fmt.Println(post)
+		fmt.Println(k)
 	}
 	for _, post := range PostByAuthor["peter"] {
 		fmt.Println(post)
 	}
+}
+*/
+
+// 文件读写
+package main
+
+import (
+	"fmt"
+	"io/ioutil"
+	"os"
+)
+
+func main() {
+	data := []byte("hello world\n")
+	err := ioutil.WriteFile("data1", data, 0644)
+	if err != nil {
+		panic(err)
+
+	}
+	r1, _ := ioutil.ReadFile("data1")
+	fmt.Println(string(r1))
+
+	f1, _ := os.Create("data2")
+	defer f1.Close()
+
+	bytes, _ := f1.Write(data)
+	fmt.Printf("Wrote %d bytes to file\n", bytes)
+
+	f2, _ := os.Open("data2")
+	defer f2.Close()
+
+	r2 := make([]byte, len(data))
+	bytes, _ = f2.Read(r2)
+	fmt.Printf("Read %d bytes from file\n", bytes)
+	fmt.Println(string(r2))
 }
