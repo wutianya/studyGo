@@ -1,0 +1,25 @@
+{
+		"id": 1,
+		"content": "Yes is me",
+		"author": {
+				"id": 2,
+				"name": "Jreey"
+		},
+		"comments": [
+				{
+						"id": 3,
+						"content": "Hava a good day!",
+						"author": "Adam"
+				},
+				{
+						"id": 4,
+						"content": "How are you today?",
+						"author": "Betty"
+				},
+				{
+						"id": 5,
+						"content": "Who am i",
+						"author": "Dawen"
+				}
+		]
+}

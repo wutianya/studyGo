@@ -1,6 +1,20 @@
 // 存储数据
 
 /*
+create table  "test".posts (
+	id serial primary key,
+	content text,
+	author varchar(255)
+);
+
+create table "test".comments(
+	id serial primary key,
+	content text,
+	author varchar(255),
+	post_id integer references "test".posts(id)
+);
+*/
+/*
 package main
 
 import (
@@ -134,7 +148,7 @@ func main() {
 	}
 	defer file.Close()
 
-	reader := csv.NewReader(file) 
+	reader := csv.NewReader(file)
 	reader.FieldsPerRecord = -1
 	record, err := reader.ReadAll()
 	if err != nil {
@@ -259,11 +273,11 @@ func (post *Post) Create() (err error) {
 	statement := "insert into test.posts (content, author) values ($1, $2) returning id"
 	stmt, err := Db.Prepare(statement)
 	if err != nil {
-		return 
+		return
 	}
 	defer stmt.Close()
 	err = stmt.QueryRow(post.Content, post.Author).Scan(&post.Id)
-	return 
+	return
 }
 // 更新帖子
 func (post *Post) update() (err error) {
@@ -279,7 +293,7 @@ func (post *Post) delete() (err error) {
 func main() {
 	// default id 0
 	// post := Post{Content:"hello world!",Author:"wty"}
-	
+
 	// fmt.Println(post)
 	// post.Create()
 
@@ -288,17 +302,17 @@ func main() {
 	// readPost.Content = "study golang."
 	// readPost.Author = "wty"
 	// readPost.update()
-	
+
 	posts, _ := Posts(2)
 	fmt.Println(posts)
-	
+
 	post := Post{Id: 1, Content:"hello world!",Author:"wty"}
 	post.Create()
 	// readPost.delete()
 
 }
 */
-
+/*
 // 实现一对多以及多对一关系
 package main
 
@@ -347,7 +361,7 @@ func GetPost(id int) (post Post, err error) {
 	post = Post{}
 	post.Comments = []Comment{}
 	err = Db.QueryRow("select id, content, author from test.posts where id = $1", id).Scan(&post.Id, &post.Content, &post.Author)
-	
+
 	rows, err := Db.Query("select id, content, author from test.comments")
 	if err != nil {
 		return
@@ -361,7 +375,7 @@ func GetPost(id int) (post Post, err error) {
 		post.Comments = append(post.Comments, comment)
 	}
 	rows.Close()
-	return 
+	return
 }
 
 func (p *Post) Create() (err error) {
@@ -382,5 +396,108 @@ func main() {
 	fmt.Println(readPost.Comments)
 	fmt.Println(readPost.Comments[0].Post)
 }
-
+*/
+/*
 // 关系映射器
+// github.com/jmoiron/sqlx
+package main
+
+import (
+	"fmt"
+	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
+)
+
+type Post struct {
+	Id		int
+	Content	string
+	AuthorName string `db:author`
+}
+
+var Db *sqlx.DB
+
+func init() {
+	var err error
+	Db, err = sqlx.Open("postgres", "host=192.168.2.25 user=postgres dbname=gwp password=postgres123456 port=5432 sslmode=disable")
+	if err != nil {
+		panic(err)
+	}
+}
+
+func GetPost(id int) (post Post, err error) {
+	post = Post{}
+	err = Db.QueryRowx("select id, content, author from test.posts where id = $1", id).StructScan(&post)
+	if err != nil {
+		return
+	}
+	return
+}
+
+func (post *Post) Create() (err error) {
+	err = Db.QueryRow("insert into test.posts (content, author) values ($1, $2) returning id", post.Content, post.AuthorName).Scan(&post.Id)
+	return
+
+}
+
+func main() {
+	post := Post{Content: "droir", AuthorName: "Tom"}
+	post.Create()
+	fmt.Println(post)
+}
+*/
+
+// gorm
+package main
+
+import (
+	"time"
+	"fmt"
+
+	"github.com/jinzhu/gorm"
+	_ "github.com/lib/pq"
+)
+
+type Post struct {
+	Id        int
+	Content   string
+	Author    string `sql:"not null"`
+	Comments  []Comment
+	CreatedAt time.Time
+}
+
+type Comment struct {
+	Id        int
+	Comtent   string
+	Author    string `sql: "not null"`
+	Post      int    `sql:"index"`
+	CreatedAt time.Time
+}
+
+var Db *gorm.DB
+
+func init() {
+	var err error
+	Db, err = gorm.Open("postgres", "host=192.168.2.25 user=postgres dbname=gwp password=postgres123456 port=5432 sslmode=disable")
+
+	if err != nil {
+		panic(err)
+	}
+	Db.AutoMigrate(&Post{}, & Comment{})
+}
+
+func main() {
+	post := Post{Content: "fuck day.", Author:"zs"}
+	fmt.Println(post)
+
+	Db.Create(&post)
+	fmt.Println(post)
+
+	comment := Comment{Comtent:"fuck post!", Author: "Sam"}
+	Db.Model(&post).Association("Comments").Append(comment)
+
+	var readPost Post
+	Db.Where("author = $1", "zs").First(&readPost)
+	var comments []Comment
+	Db.Model(&readPost).Related(&comments)
+	fmt.Println(comments)
+}
