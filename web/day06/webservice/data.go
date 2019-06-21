@@ -28,6 +28,7 @@ func (post *Post) create() (err error) {
 		return
 	}
 	defer stmt.Close()
+	// scan方法把sql查询语句返回的id列的值设置为post接收者的id字段的值
 	err = stmt.QueryRow(post.Content, post.Author).Scan(&post.Id)
 	return
 }

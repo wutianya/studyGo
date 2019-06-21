@@ -1,3 +1,4 @@
+/*
 package main
 
 import (
@@ -26,4 +27,48 @@ func TestLongRunningTest(t *testing.T) {
 }
 func TestEnCode(t *testing.T) {
 	t.Skip("Skipping encoding for now")
+}
+*/
+/*
+// 并行测试
+package main
+
+import (
+	"testing"
+	"time"
+)
+func TestParallel_1(t *testing.T) {
+	t.Parallel()
+	time.Sleep(1 * time.Second)
+}
+
+func TestParallel_2(t *testing.T) {
+	t.Parallel()
+	time.Sleep(2 * time.Second)
+}
+
+func TestParallel_3(t *testing.T) {
+	t.Parallel()
+	time.Sleep(3 * time.Second)
+}
+*/
+
+// 基准测试
+// go test -v -cover -short -bench .
+package main 
+
+import (
+	"testing"
+)
+
+func BenchmarkDecode(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		decode("post.json")
+	}
+}
+
+func BenchmarkUnmarshal(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		unmarshal("post.json")
+	}
 }
