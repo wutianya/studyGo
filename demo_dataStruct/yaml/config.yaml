@@ -1,0 +1,5 @@
+config:
+  host: "172.17.10.4"
+  user: "simpletour"
+  port: 22
+  password: "test"

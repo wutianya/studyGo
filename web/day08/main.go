@@ -126,3 +126,40 @@ func main() {
 */
 
 // close channel
+package main
+
+import (
+	"fmt"
+)
+
+func callerA(c chan string) {
+	c <- "hello world"
+	close(c)
+}
+func callerB(c chan string) {
+	c <- "hola mundo"
+	close(c)
+}
+func main(){
+	a, b := make(chan string), make(chan string)
+	ok1, ok2 := true, true
+	go callerA(a)
+	go callerB(b)
+	var msg string
+	for ok1 || ok2 {
+		select {
+		// 多值格式, 从通道a里面取出的值被赋值给变量msg,
+		// 变量ok1则会被设置为用于表示通道是否仍然处于打开状态的布尔值. 如果通道已被关闭,那么ok1的值将被设置为false
+		case msg, ok1 = <-a:
+			if ok1 {
+				fmt.Printf("%s from A\n", msg)
+			}
+			fmt.Println("ok1: ", ok1)
+		case msg, ok2 = <-b:
+			if ok2 {
+				fmt.Printf("%s from B\n", msg)
+			}
+			fmt.Println("ok2: ", ok2)
+		}
+	}
+}
